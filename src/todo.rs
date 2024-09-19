@@ -45,6 +45,19 @@ impl fmt::Display for Todo
 }
 impl Todo
 {
+	pub fn complete(&mut self)
+	{
+		if self.complete == true
+		{
+			return
+		}
+		// Else
+		self.complete = true;
+		self.finished_date = Some(Date::today());
+
+		// TODO: addons_on_complete
+	}
+	
 	pub fn from(string: &str) -> Todo
 	{
 		// Using the specifications from:
@@ -56,8 +69,6 @@ impl Todo
 		let mut priority: Option<char> = None;
 		let mut creation_date: Option<Date> = None;
 		let mut finished_date: Option<Date> = None;
-		let mut description: String = String::new();
-		let mut tags = Tags::default();
 
 		let mut index = 0;
 
@@ -118,13 +129,13 @@ impl Todo
 			i -= 1; // decrement i because I couldn't make enumerate behave
 		}
 
-		description = items
+		let description = items
 			.take(i) // Get the first i number of items
 			.map(|s| {s.to_owned() + " "}) // for each item, give them their space back
 			.collect::<String>(); // collect the items into a String
 
 		// Get tags from the description & custom tags
-		tags = Tags::from( &string [index .. ] );
+		let tags = Tags::from( &string [index .. ] );
 		
 		//Ok(
 			Todo
