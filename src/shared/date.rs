@@ -7,6 +7,11 @@ pub struct Date
     pub month: u8,
     pub day: u8
 }
+/*
+   TODO: Date comparison https://doc.rust-lang.org/std/cmp/index.html
+*/
+
+
 impl fmt::Display for Date
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result 
@@ -18,6 +23,98 @@ impl fmt::Display for Date
         write!(f, "{year_string}-{month_string}-{day_string}")
     }
 }
+
+
+impl std::cmp::PartialEq for Date
+{
+    fn eq(&self, other: &Self) -> bool
+    {
+           self.year  == other.year
+        && self.month == other.month
+        && self.day   == other.day
+    }
+}
+
+impl std::cmp::Eq for Date {}
+
+impl std::cmp::Ord for Date
+{
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        if self < other
+        {
+            return std::cmp::Ordering::Less
+        }
+        if self > other
+        {
+            return std::cmp::Ordering::Greater
+        }
+        // Else
+        std::cmp::Ordering::Equal
+    }
+}
+
+impl std::cmp::PartialOrd for Date
+{
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering>
+    
+    {
+        // ??????????????
+        Some(self.cmp(other))
+    }
+
+    fn lt(&self, other: &Self) -> bool 
+    {
+        if self.year < other.year {return true}
+        if self.year > other.year {return false}
+        // else self.year == other.year
+        if self.month < other.month {return true}
+        if self.month > other.month {return false}
+        // else self.month == other.month
+        if self.day < other.day {return true}
+        // Else
+        false // return false
+    }
+
+    fn le(&self, other: &Self) -> bool
+    {
+        if self.year <= other.year {return true}
+        if self.year > other.year {return false}
+        // else self.year == other.year
+        if self.month <= other.month {return true}
+        if self.month > other.month {return false}
+        // else self.month == other.month
+        if self.day <= other.day {return true}
+        // Else
+        false // return false
+    }
+
+    fn gt(&self, other: &Self) -> bool
+    {
+        if self.year > other.year {return true}
+        if self.year < other.year {return false}
+        // else self.year == other.year
+        if self.month > other.month {return true}
+        if self.month < other.month {return false}
+        // else self.month == other.month
+        if self.day > other.day {return true}
+        // Else
+        false // return false
+    }
+
+    fn ge(&self, other: &Self) -> bool
+    {
+        if self.year >= other.year {return true}
+        if self.year < other.year {return false}
+        // else self.year == other.year
+        if self.month >= other.month {return true}
+        if self.month < other.month {return false}
+        // else self.month == other.month
+        if self.day >= other.day {return true}
+        // Else
+        false // return false
+    }
+}
+
 impl Date
 {
     pub fn year_string(self) -> String
