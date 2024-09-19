@@ -1,40 +1,55 @@
+#![allow(dead_code)]
 
 mod shared;
 
 mod todo;
+pub use todo::*;
 mod tags;
 
+mod sort;
 mod addons;
+
+mod test;
 
 /*
    The Todo.txt documentation: https://github.com/todotxt/todo.txt
-  
-  TODO: Spin off our own super simple shared-rs library
-  * Include Date, Vector
 */
+#[must_use] // the caller of this function MUST USE the returned result
+pub fn bulk_create(string: &str) -> Vec<todo::Todo>
+{
+    let mut todo_vec = Vec::new();
+    let lines = if string.contains("\r\n") // If windows...
+                {
+                    string.split("\r\n") // search for the carriage return
+                }
+                else // else
+                {
+                    #[allow(clippy::single_char_pattern)] // shut up clippy
+                    string.split("\n") // be normal
+                };
 
-
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+    for line in lines
+    {
+        // ignore empty lines
+        if ! line.is_empty()
+        {
+            todo_vec.push(todo::Todo::from(line));
+        }
     }
+
+    todo_vec // return to_return
 }
 
-/*
-   TODO: Testing
-   
-   * input:  Valid Todo item string
-   * action: Input into the program & then output back out
-   * result: The same string
 
-   
-*/
+#[must_use]
+pub fn flatten_vec(todo_vec: Vec<todo::Todo>) -> String
+{
+    let mut string = String::new();
+    
+    for todo in todo_vec
+    {
+        string += &(todo.to_string() + "\n");
+    }
+
+    string // return string
+}
