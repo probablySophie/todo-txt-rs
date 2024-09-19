@@ -4,6 +4,8 @@ mod shared;
 mod todo;
 mod tags;
 
+mod addons;
+
 /*
    The Todo.txt documentation: https://github.com/todotxt/todo.txt
   
