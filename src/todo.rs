@@ -57,16 +57,14 @@ impl Todo
 
 		// TODO: addons_on_complete
 	}
-	
+
+	#[must_use]
 	pub fn from(string: &str) -> Todo
 	{
 		// Using the specifications from:
 		// https://github.com/todotxt/todo.txt
 
-		let mut string_chars = string.chars();
-
 		// defaulting everything to negative or None
-		let mut priority: Option<char> = None;
 		let mut creation_date: Option<Date> = None;
 		let mut finished_date: Option<Date> = None;
 
@@ -74,20 +72,22 @@ impl Todo
 
 		// Is the task item complete?
 		let complete = string[0..2] == *"x ";
-		if complete 
-		{ 
-			index += 2;
+		// If yes, increment Index
+		if complete { index += 2 };
+
+
+		let priority: Option<char> = if let Ok(returned_priority) = get_priority(&string[index..index+2])
+		{
+			Some(returned_priority)
+		}
+		else
+		{
+			None
 		};
 
-		// Does the task item have a priority?
-		// INFO: If the task is complete, then it almost certainly won't have a priority...
-		//       any more, but we'll check anyway, just incase
-		if string_chars.nth(index).unwrap() == '(' && string_chars.nth(index+2).unwrap() == ')'
-		{
-			// If yes, set it
-			priority = string_chars.nth(index+1);
-			index += 4; // including the space
-		}
+		// And increment Index if we got a priority
+		if priority.is_some() { index += 4 };
+
 
 		// INFO: Based on the example description.svg from the docs, it goes complete -> priority -> completion date
 		// If the task item is complete, is there a completion date?
@@ -112,27 +112,7 @@ impl Todo
 		// Technically everything left over is the description according to...
 		// (the explainer image in) the docs, but that's kind of ugly and awful :(
 
-		// Split the description by spaces
-		let items = string[index .. ].split(' ');
-		let mut i = items.clone().count(); // count how many items are in the split
-
-		// Go backwards through the items
-		for item in items.clone().rev()
-		{
-			// If the item ISN'T a tag
-			if item.find(':').is_none()
-			{
-				// Break out of the for loop because we're done
-				break;
-			}
-			// Else, it IS a tag, so keep going
-			i -= 1; // decrement i because I couldn't make enumerate behave
-		}
-
-		let description = items
-			.take(i) // Get the first i number of items
-			.map(|s| {s.to_owned() + " "}) // for each item, give them their space back
-			.collect::<String>(); // collect the items into a String
+		let description = get_description(&string[index .. ]);
 
 		// Get tags from the description & custom tags
 		let tags = Tags::from( &string [index .. ] );
@@ -151,3 +131,97 @@ impl Todo
 	}
 }
 
+
+fn get_priority(priority_slice: &str) -> Result<char, &str>
+{
+    if priority_slice.len() != 3
+    {
+        return Err("Given string is incorrect length.  Length must be 3")
+    }
+
+    let mut chars = priority_slice.chars();
+
+    if chars.next() != Some('(') || chars.nth(2) != Some(')')
+    {
+        return Err("Priority must be in the form '(X)'")
+    }
+
+    if chars.nth(1).is_some()
+    {
+        return Ok(chars.nth(1).expect("?????????????"))
+    }
+
+    Err("Unable to get priority")
+}
+
+fn get_description(description_string: &str) -> String
+{
+		// Split the description by spaces
+		let items = description_string.split(' ');
+		let mut i = items.clone().count(); // count how many items are in the split
+
+		// Go backwards through the items
+		for item in items.clone().rev()
+		{
+			// If the item ISN'T a tag
+			if item.find(':').is_none()
+			{
+				// Break out of the for loop because we're done
+				break;
+			}
+			// Else, it IS a tag, so keep going
+			i -= 1; // decrement i because I couldn't make enumerate behave
+		}
+		// return
+		items
+			.take(i)                      // Get the first i number of items
+			.map(|s| {s.to_owned() + " "})// for each item, tack on a space
+			.collect::<String>()          // collect the items into a String
+			.trim_end()                   // remove any trailing whitespace
+			.to_string()                  // we want it as a String again
+}
+
+
+#[cfg(test)]
+mod test
+{
+	#[test]
+	fn test_priority()
+	{
+	    use super::get_priority;
+
+		let empty_priority = get_priority("");
+		let long_priority = get_priority("(A)d");
+		let incorrect_form = get_priority("[B]");
+		let correct_priority = get_priority("(D)");
+
+		assert!(empty_priority.is_err());
+		assert!(long_priority .is_err());
+		assert!(incorrect_form .is_err());
+		
+		assert_eq!(correct_priority, Ok('D'));
+	}
+
+	#[test]
+	fn test_description()
+	{
+		use super::get_description;
+
+		// Empty Description
+		assert_eq!(
+			get_description(""), 
+			String::new()
+		);
+		// Just text
+		assert_eq!(
+			get_description("Why hello there my friend"), 
+			"Why hello there my friend".to_string()
+		);
+		// With two valid extra tags
+		assert_eq!(
+			get_description("Wow, what a nice dog plan:stealTheDog t:1969-07-20"), 
+			"Wow, what a nice dog".to_string()
+		);
+		
+	}
+}

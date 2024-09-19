@@ -15,6 +15,9 @@ Aiming to follow the [`todo.txt` standard](https://github.com/todotxt/todo.txt),
     - [ ] Future tasks! `t:YYYY-MM-DD` (future starting date)
 	- [ ] Repeating tasks! `repeats:1day`
 	- [ ] Due date! `due:YYYY-MM-DD`
+	- [ ] Task that must be done multiple times `completion:2of5`
+	- [ ] ID numbers `id:abc123` (hash the text?)
+	- [ ] Task blockers `requires:abc123` (requires task with `id` be complete first)
 - [ ] Default (built-in) sort options (ascending & descending)
     - [ ] By due date
 	- [ ] By creation date
@@ -23,6 +26,7 @@ Aiming to follow the [`todo.txt` standard](https://github.com/todotxt/todo.txt),
 	- [ ] Due today!! (or due on specific date)
 	- [ ] Only complete (or incomplete) tasks
 	- [ ] By priority
+	- [ ] By whether or not it has a specific tag
 - [ ] Multi-file 
     - [ ] (store `origin:filename`, save back to where they came from)
 	- [ ] Sort into files by Project
