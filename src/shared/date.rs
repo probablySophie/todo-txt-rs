@@ -150,39 +150,21 @@ impl Date
             year: 0,
         }
     }
-    pub fn from(date: &str) -> Result<Date, &str>
+
+    fn from_numbers(year: u16, month: u8, day: u8) -> Result<Date, String>
     {
-        if date.len() != 10
-        {
-            return Err("Date string is the wrong length")
-        }
-
-        // Attempt to parse the input, but DON'T UNWRAP IT
-        let year_wrapped  = &date[0.. 4].parse::<u16>();
-        let month_wrapped = &date[5.. 7].parse::<u8>();
-        let day_wrapped   = &date[8..10].parse::<u8>();
-
-        // If we were unable to properly parse the input, return ERR
-        if year_wrapped.as_ref().is_err() || month_wrapped.as_ref().is_err() || day_wrapped.as_ref().is_err()
-        {
-            return Err("Unable to properly parse the given numbers, please make sure you provide the date in the format YYYY-MM-DD")
-        }
-
-        // Now actually make sure the values are valid
-        let year: u16 = year_wrapped.as_ref().unwrap().to_owned();
-        let month: u8 = month_wrapped.as_ref().unwrap().to_owned();
-        let day: u8 = day_wrapped.as_ref().unwrap().to_owned();
-
         // Honestly, year can be whatever it wants to be
+        // Pre-zero dates are fake and I don't trust them
+        
         // And I am NOT doing per month # day validation, I'm  l a z y
 
-        if month > 12
+        if month > 12 || month == 0
         {
-            return Err("Month > 12, that's bad")
+            return Err("Invalid month value.  Month must be 0 < x <= 12".into())
         }
-        if day > 31
+        if day > 31 || day == 0
         {
-            return Err("Day > 31, that's bad")
+            return Err("Invalid day value.  Day must be 0 < x <= 31".into())
         }
 
         // If we've gotten here, then we should be good
@@ -195,5 +177,93 @@ impl Date
             }
         )
     }
+    
+    pub fn from(date: &str) -> Result<Date, String>
+    {
+        // We're doing this without Regex... It's not going to be quite as efficent, but it cuts out a dependancy.
+
+        let mut break_1 = 0;
+        let mut break_2 = 0;
+
+        // For each character in date & it's index
+        for (i, the_char) in date.chars().enumerate()
+        {
+            // if the character is a date seperator
+            if is_date_char(the_char)
+            {
+                // and we haven't first set break_1
+                if break_1 == 0
+                {
+                    break_1 = i; // set break_1
+                    continue;
+                }
+                break_2 = i; // else set break_2
+            }
+        }
+
+        // make sure we actually found 3 distinct values
+        if break_1 == 0 || break_2 == 0
+        {
+            return Err("Invalid date format.  Dates must be YYYY-MM-DD".into())
+        }
+                
+        // Attempt to parse the input, but DON'T UNWRAP IT
+        let year_wrapped  = &date[0           .. break_1].parse::<u16>();
+        let month_wrapped = &date[break_1 + 1 .. break_2].parse::<u8>();
+        let day_wrapped   = &date[break_2 + 1 ..        ].parse::<u8>();
+
+        // If we were unable to properly parse the input, return ERR
+        if year_wrapped.as_ref().is_err() || month_wrapped.as_ref().is_err() || day_wrapped.as_ref().is_err()
+        {
+            return Err("Unable to properly parse the given numbers, please make sure you provide the date in the format YYYY-MM-DD".into())
+        }
+
+        // Now actually make sure the values are valid
+        let year: u16 = year_wrapped.as_ref().unwrap().to_owned();
+        let month: u8 = month_wrapped.as_ref().unwrap().to_owned();
+        let day: u8 = day_wrapped.as_ref().unwrap().to_owned();
+
+        // Return the result of from_numbers
+        Date::from_numbers(year, month, day)
+    }
 }
 
+fn is_date_char(test_char: char) -> bool
+{
+    // Else
+    matches!(test_char, '/' | '-' | '\\' )
+}
+
+#[cfg(test)]
+mod test
+{
+    #[test]
+    fn check_date()
+    {
+        use super::Date;
+
+        // Just a regular (valid) date
+        assert_eq!(
+            Date::from("2000-01-01").unwrap().to_string(),
+            "2000-01-01".to_string()
+        );
+
+        // Without month or day leading zeros (still valid)
+        assert_eq!(
+            Date::from("2000-1-1").unwrap().to_string(),
+            "2000-01-01".to_string()
+        );
+
+        // A 13th month??!?
+        assert!(Date::from("2000-13-01").is_err());
+
+        // A 32nd day!?!?!?!
+        assert!(Date::from("2000-01-32").is_err());
+        
+        // Without seperators (should error)
+        assert!(Date::from("20000101").is_err());
+
+        // Invalid seperators (should error)
+        assert!(Date::from("2000x01x01").is_err());
+    }
+}
