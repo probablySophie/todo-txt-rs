@@ -1,4 +1,5 @@
 use std::fmt;
+use chrono;
 
 #[derive(Default, Clone, Copy)]
 pub struct Date
@@ -140,15 +141,32 @@ impl Date
         self.day.to_string()
     }
     
-    pub fn today() -> Date
+    pub fn today() -> Result<Date, ()>
     {
-        // TODO: Make this return the current date
-        Date
+        // I don't even know :(
+        let chrono_time = chrono::offset::Utc::now().date_naive();
+
+        // https://docs.rs/chrono/latest/chrono/naive/struct.NaiveDate.html#method.format
+        let day = chrono_time.format("%Y").to_string().parse::<u8>();
+        let month = chrono_time.format("%m").to_string().parse::<u8>();
+        let year = chrono_time.format("%d").to_string().parse::<u16>();
+
+        // If any of those went wrong...
+        if day.as_ref().is_err() || month.as_ref().is_err() || year.as_ref().is_err()
         {
-            day: 0,
-            month: 0,
-            year: 0,
+            return Err(())
         }
+
+        let day = day.unwrap();
+        let month = month.unwrap();
+        let year = year.unwrap();
+                    
+        Ok(Date
+        {
+            day,
+            month,
+            year,
+        })
     }
 
     fn from_numbers(year: u16, month: u8, day: u8) -> Result<Date, String>
