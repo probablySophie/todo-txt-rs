@@ -3,9 +3,25 @@ use crate::todo::Todo;
 pub enum Sort
 {
     ASCENDING,
-    DESCENDING
+    DESCENDING,
 }
 
-pub fn due() {} // TODO
+/*
+    Ascending / Descending
+*/
 
-pub fn creation(todo_vec: Vec<Todo>, sort_by: Sort) {} // TODO
+pub fn due_date(todo_vec: &Vec<Todo>, sort_by: Sort) -> Vec<Todo>
+{
+    // TODO:
+}
+
+pub fn creation_date(todo_vec: &Vec<Todo>, sort_by: Sort) -> Vec<Todo>
+{
+    // TODO:
+}
+
+pub fn priority(todo_vec: &Vec<Todo>, sort_by: Sort) -> Vec<Todo>
+{
+    // TODO:
+}
+
