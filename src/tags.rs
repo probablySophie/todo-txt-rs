@@ -3,9 +3,9 @@ use std::fmt;
 #[derive(Default)]
 pub struct Tags
 {
-	project: Vec<String>,
-	context: Vec<String>,
-	custom: Vec<(String, String)>,
+	pub project: Vec<String>,
+	pub context: Vec<String>,
+	pub custom: Vec<(String, String)>,
 }
 
 impl fmt::Display for Tags
@@ -17,8 +17,10 @@ impl fmt::Display for Tags
 
         let tag_string: String = self.custom.clone()
             .into_iter()
-            .map(|(tag, value)| { tag + ":" + &value }) // Stringify the tag:value
-            .collect::<String>();
+            .map(|(tag, value)| { tag + ":" + &value + " " }) // Stringify the tag:value
+            .collect::<String>()
+        	.trim_end()
+        	.to_string();
         
         write!(f, "{tag_string}")
     }
@@ -52,7 +54,7 @@ impl Tags
     }
     pub fn has_tag(&self, tag: &str) -> bool
     {
-        for (custom_tag, value) in self.custom.clone()
+        for (custom_tag, _value) in self.custom.clone()
         {
             if custom_tag == tag
             {
@@ -87,7 +89,8 @@ impl Tags
 			// sexy little bit of safety
 			if !item.is_empty()
 			{
-				match item.chars().nth(0).unwrap()
+				// Check the first char, the string isn't empty so there'll 100% be one
+				match item.chars().next().unwrap()
 				{
 					// +ProjectTag
 					'+' => {
@@ -105,14 +108,24 @@ impl Tags
 						if colon_index.is_some()
 						{
 							let colon_index = colon_index.unwrap();
+
+							let pre_string = item[0..colon_index].to_string();
+							let post_string = item[colon_index+1..].to_string();	
+
+							// ✨ safety ✨
+							if pre_string.is_empty() || post_string.is_empty()
+							{
+								continue // skip if either pre:post is empty
+							}
+
 							tags.custom.push(
 								(
-									item[0..colon_index].to_string(), // pre-colon
-									item[colon_index+1..].to_string() // post-colon
+									pre_string,
+									post_string
 								)
 							);
 						}
-					},
+					}
 				}
 			}
 		}
@@ -120,5 +133,37 @@ impl Tags
 		// TODO: actually populate the tags list
 
 		tags // return tags
+	}
+}
+
+
+#[cfg(test)]
+mod test
+{
+	#[test]
+	fn tags()
+	{
+		use super::Tags;
+				
+		let test_tags = Tags::from("Test +string @123 one:two three:four");
+
+		// Checking we got the values correctly
+		assert_eq!(test_tags.project[0], "string");
+		assert_eq!(test_tags.context[0], "123");
+		assert_eq!(test_tags.to_string(), "one:two three:four");
+
+		// Checking the project & context
+		assert_eq!(test_tags.matches_project("string"), true);
+		assert_eq!(test_tags.matches_project("stringg"), false);
+		assert_eq!(test_tags.matches_context("123"), true);
+		assert_eq!(test_tags.matches_context("1234"), false);
+
+		// Checking if tags exist
+		assert_eq!(test_tags.has_tag("one"), true);
+		assert_eq!(test_tags.has_tag("AAA"), false);
+
+		// Getting tag values
+		assert_eq!(test_tags.tag_value("three").unwrap(), "four");
+		assert!(test_tags.tag_value("BBB").is_err());
 	}
 }
