@@ -34,8 +34,11 @@ Aiming to follow the [`todo.txt` standard](https://github.com/todotxt/todo.txt),
 - [ ] Organisation-y things
 	- [ ] List the different projects
 	- [ ] List the different contexts
-- [ ] Learn how to properly use the built in Rust test suite  
+- [/] Learn how to properly use the built in Rust test suite  
 - [ ] At some point spin Date off into its own library
+
+#### Planned Frontends
+
 - [ ] Make a separate Rust TUI for this
 - [ ] Something something NextCloud syncing
 - [ ] Google syncing?  That can't be too hard... Right...?
