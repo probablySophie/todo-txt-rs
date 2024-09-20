@@ -1,7 +1,7 @@
 #[cfg(test)]
 
 #[test]
-fn it_works()
+fn empty_todo()
 {
     use crate::Todo;
 
@@ -10,6 +10,7 @@ fn it_works()
     assert_eq!(todo.to_string(), "");
 }
 
+// TODO: more testing of the Todo struct
 
 /*
    TODO: Testing
