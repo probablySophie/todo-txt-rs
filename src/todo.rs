@@ -3,7 +3,7 @@ use std::fmt;
 
 use crate::tags::Tags;
 
-
+#[derive(Default)]
 pub struct Todo
 {
 	complete: bool,
@@ -45,22 +45,38 @@ impl fmt::Display for Todo
 }
 impl Todo
 {
-	pub fn complete(&mut self)
+	pub fn complete(&mut self) -> Result<(), ()>
 	{
-		if self.complete == true
+		if self.complete
 		{
-			return
+			return Err(())
 		}
 		// Else
-		self.complete = true;
-		self.finished_date = Some(Date::today());
 
-		// TODO: addons_on_complete
-	}
+		// TODO: If addons::on_complete(task), then continue, else, its actually not complete
+		
+		self.complete = true;
+
+		if let Ok(today) = Date::today()
+		{
+			self.finished_date = Some(today);
+		}
+		else
+		{
+			return Err(())
+		}
+		Ok(())
+		
+}
 
 	#[must_use]
 	pub fn from(string: &str) -> Todo
 	{
+		if string.len() < 2
+		{
+			return Todo::default();
+		}
+		
 		// Using the specifications from:
 		// https://github.com/todotxt/todo.txt
 
@@ -139,19 +155,22 @@ fn get_priority(priority_slice: &str) -> Result<char, &str>
         return Err("Given string is incorrect length.  Length must be 3")
     }
 
-    let mut chars = priority_slice.chars();
-
-    if chars.next() != Some('(') || chars.nth(2) != Some(')')
+    if ! (priority_slice.starts_with("(") && priority_slice.ends_with(")") )
     {
         return Err("Priority must be in the form '(X)'")
     }
 
-    if chars.nth(1).is_some()
+	let priority_char = priority_slice.chars().nth(1);
+	if priority_char.is_none() {return Err("???")}
+	let priority_char = priority_char.unwrap();
+
+	// TODO: Check if [1] is a letter
+    if priority_char.is_alphanumeric()
     {
-        return Ok(chars.nth(1).expect("?????????????"))
+        return Ok(priority_char)
     }
 
-    Err("Unable to get priority")
+    Err("Priority needs to be alphanumeric")
 }
 
 fn get_description(description_string: &str) -> String
@@ -185,21 +204,27 @@ fn get_description(description_string: &str) -> String
 #[cfg(test)]
 mod test
 {
+	use super::get_priority;
+	
 	#[test]
-	fn test_priority()
+	fn test_empty_priority()
 	{
-	    use super::get_priority;
-
-		let empty_priority = get_priority("");
-		let long_priority = get_priority("(A)d");
-		let incorrect_form = get_priority("[B]");
-		let correct_priority = get_priority("(D)");
-
-		assert!(empty_priority.is_err());
-		assert!(long_priority .is_err());
-		assert!(incorrect_form .is_err());
-		
-		assert_eq!(correct_priority, Ok('D'));
+		assert!(get_priority("").is_err());
+	}
+	#[test]
+	fn test_long_priority()
+	{
+		assert!(get_priority("(A)d").is_err());
+	}
+	#[test]
+	fn test_incorrect_form()
+	{
+		assert!(get_priority("[B]").is_err());
+	}
+	#[test]
+	fn test_correct_priority()
+	{
+		assert_eq!(get_priority("(D)"), Ok('D'));
 	}
 
 	#[test]
