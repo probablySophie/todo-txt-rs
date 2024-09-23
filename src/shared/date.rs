@@ -8,10 +8,6 @@ pub struct Date
     pub month: u8,
     pub day: u8
 }
-/*
-   TODO: Date comparison https://doc.rust-lang.org/std/cmp/index.html
-*/
-
 
 impl fmt::Display for Date
 {

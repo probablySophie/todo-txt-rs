@@ -7,7 +7,7 @@ pub use todo::*;
 mod tags;
 
 //mod sort;
-//mod filter;
+mod filter;
 //mod addons;
 
 mod test;
