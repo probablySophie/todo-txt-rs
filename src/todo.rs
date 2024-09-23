@@ -3,15 +3,15 @@ use std::fmt;
 
 use crate::tags::Tags;
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Todo
 {
-	complete: bool,
-	priority: Option<char>,
-	creation_date: Option<Date>,
-	finished_date: Option<Date>,
-	description: String,
-	tags: Tags,
+	pub complete: bool,
+	pub priority: Option<char>,
+	pub creation_date: Option<Date>,
+	pub finished_date: Option<Date>,
+	pub description: String,
+	pub tags: Tags,
 }
 impl fmt::Display for Todo
 {
@@ -33,7 +33,8 @@ impl fmt::Display for Todo
 
 		let mut description = self.description.clone();
 		// If there isn't a space at the end of the description
-		if ! description.ends_with(' ')
+		// (and there is actually a description)
+		if ! description.ends_with(' ') && ! description.is_empty()
 		{
 			description += " "; // tack one on
 		}
