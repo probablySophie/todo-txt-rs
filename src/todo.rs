@@ -9,7 +9,7 @@ pub struct Todo
 	pub complete: bool,
 	pub priority: Option<char>,
 	pub creation_date: Option<Date>,
-	pub finished_date: Option<Date>,
+	pub completion_date: Option<Date>,
 	pub description: String,
 	pub tags: Tags,
 }
@@ -23,8 +23,8 @@ impl fmt::Display for Todo
 			"(".to_owned() + &self.priority.unwrap().to_string() + ") "
 		} else {String::new()};
 
-		let completion_date = if self.finished_date.is_some() {
-			self.finished_date.unwrap().to_string() + " "
+		let completion_date = if self.completion_date.is_some() {
+			self.completion_date.unwrap().to_string() + " "
 		} else {String::new()};
 
 		let creation_date = if self.creation_date.is_some() {
@@ -60,7 +60,7 @@ impl Todo
 
 		if let Ok(today) = Date::today()
 		{
-			self.finished_date = Some(today);
+			self.completion_date = Some(today);
 		}
 		else
 		{
@@ -139,8 +139,8 @@ impl Todo
 			{
 				complete,
 				priority,
-				creation_date,
-				finished_date,
+				creation_date: creation_date,
+				completion_date: finished_date,
 				description,
 				tags
 			}
