@@ -93,7 +93,7 @@ impl Todo
 		if complete { index += 2 };
 
 
-		let priority: Option<char> = if let Ok(returned_priority) = get_priority(&string[index..index+2])
+		let priority: Option<char> = if let Ok(returned_priority) = get_priority(&string[index..index+3])
 		{
 			Some(returned_priority)
 		}
@@ -208,22 +208,22 @@ mod test
 	use super::get_priority;
 	
 	#[test]
-	fn test_empty_priority()
+	fn empty_priority()
 	{
 		assert!(get_priority("").is_err());
 	}
 	#[test]
-	fn test_long_priority()
+	fn long_priority()
 	{
 		assert!(get_priority("(A)d").is_err());
 	}
 	#[test]
-	fn test_incorrect_form()
+	fn incorrect_form()
 	{
 		assert!(get_priority("[B]").is_err());
 	}
 	#[test]
-	fn test_correct_priority()
+	fn correct_priority()
 	{
 		assert_eq!(get_priority("(D)"), Ok('D'));
 	}
