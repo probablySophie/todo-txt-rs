@@ -29,6 +29,7 @@ pub fn creation_date(todo_vec: &Vec<Todo>, creation_date: Date) -> Vec<Todo>
 }
 
 // TODO: Filter by completion date
+// THEN: make a test for it
 
 pub fn project(todo_vec: &Vec<Todo>, project: &str) -> Vec<Todo>
 {
@@ -77,7 +78,6 @@ mod test
 			// Creation Date.  
 			Todo::from("description +project3 @context3"),
 		]
-		// TODO: Make a todo vec
 	}
 
 	#[test]
