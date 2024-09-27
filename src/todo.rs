@@ -36,7 +36,7 @@ impl fmt::Display for Todo
 		// (and there is actually a description)
 		if ! description.ends_with(' ') && ! description.is_empty()
 		{
-			description += " "; // tack one on
+			description += " "; // Tack one on
 		}
 
 		let tags = self.tags.to_string();
@@ -46,11 +46,15 @@ impl fmt::Display for Todo
 }
 impl Todo
 {
-	pub fn complete(&mut self) -> Result<(), ()>
+	/// Mark the `Todo` item as complete
+	/// 
+	/// # Errors
+	/// - Will return `Err` if already complete, or if unable to get `Date::today()`
+	pub fn complete(&mut self) -> Result<bool, &str>
 	{
 		if self.complete
 		{
-			return Err(())
+			return Err("Already Complete")
 		}
 		// Else
 
@@ -64,12 +68,13 @@ impl Todo
 		}
 		else
 		{
-			return Err(())
+			return Err("Unable to get Date::today()")
 		}
-		Ok(())
+		Ok(self.complete)
 		
 }
 
+	/// Make a new `Todo` item from a given `&str`
 	#[must_use]
 	pub fn from(string: &str) -> Todo
 	{
@@ -81,7 +86,7 @@ impl Todo
 		// Using the specifications from:
 		// https://github.com/todotxt/todo.txt
 
-		// defaulting everything to negative or None
+		// Defaulting everything to negative or None
 		let mut creation_date: Option<Date> = None;
 		let mut finished_date: Option<Date> = None;
 
@@ -112,9 +117,9 @@ impl Todo
 		{
 			if let Ok(parsed_date) = Date::from(&string[index..index+10])
 			{
-				// yes :)
+				// Yes :)
 				finished_date = Some(parsed_date);
-				index += 11; // include the space after the date
+				index += 11; // Include the space after the date
 			}
 		}
 		
@@ -123,7 +128,7 @@ impl Todo
 		{
 			creation_date = Some(parsed_date);
 
-			index += 11; // including the space
+			index += 11; // Including the space
 		}
 
 		// Technically everything left over is the description according to...
@@ -139,7 +144,7 @@ impl Todo
 			{
 				complete,
 				priority,
-				creation_date: creation_date,
+				creation_date,
 				completion_date: finished_date,
 				description,
 				tags
@@ -148,7 +153,7 @@ impl Todo
 	}
 }
 
-
+/// Private function: get a priority char from a given 3 char slice
 fn get_priority(priority_slice: &str) -> Result<char, &str>
 {
     if priority_slice.len() != 3
@@ -156,7 +161,7 @@ fn get_priority(priority_slice: &str) -> Result<char, &str>
         return Err("Given string is incorrect length.  Length must be 3")
     }
 
-    if ! (priority_slice.starts_with("(") && priority_slice.ends_with(")") )
+    if ! (priority_slice.starts_with('(') && priority_slice.ends_with(')') )
     {
         return Err("Priority must be in the form '(X)'")
     }
@@ -165,7 +170,6 @@ fn get_priority(priority_slice: &str) -> Result<char, &str>
 	if priority_char.is_none() {return Err("???")}
 	let priority_char = priority_char.unwrap();
 
-	// TODO: Check if [1] is a letter
     if priority_char.is_alphanumeric()
     {
         return Ok(priority_char)
@@ -174,11 +178,12 @@ fn get_priority(priority_slice: &str) -> Result<char, &str>
     Err("Priority needs to be alphanumeric")
 }
 
+/// Private function: Get a description string from a given (valid) Todo.txt input string
 fn get_description(description_string: &str) -> String
 {
 		// Split the description by spaces
 		let items = description_string.split(' ');
-		let mut i = items.clone().count(); // count how many items are in the split
+		let mut i = items.clone().count(); // Count how many items are in the split
 
 		// Go backwards through the items
 		for item in items.clone().rev()
@@ -190,15 +195,15 @@ fn get_description(description_string: &str) -> String
 				break;
 			}
 			// Else, it IS a tag, so keep going
-			i -= 1; // decrement i because I couldn't make enumerate behave
+			i -= 1; // Decrement i because I couldn't make enumerate behave
 		}
-		// return
+		// Return
 		items
 			.take(i)                      // Get the first i number of items
-			.map(|s| {s.to_owned() + " "})// for each item, tack on a space
-			.collect::<String>()          // collect the items into a String
-			.trim_end()                   // remove any trailing whitespace
-			.to_string()                  // we want it as a String again
+			.map(|s| {s.to_owned() + " "})// For each item, tack on a space
+			.collect::<String>()          // Collect the items into a String
+			.trim_end()                   // Remove any trailing whitespace
+			.to_string()                  // We want it as a String again
 }
 
 
