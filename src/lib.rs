@@ -10,7 +10,7 @@ mod tags;
 mod filter;
 //mod addons;
 
-mod test;
+#[path = "tests/main.rs"] mod test;
 
 /*
    The Todo.txt documentation: https://github.com/todotxt/todo.txt

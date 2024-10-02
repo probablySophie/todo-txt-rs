@@ -40,6 +40,7 @@ Aiming to follow the [`todo.txt` standard](https://github.com/todotxt/todo.txt),
 #### Planned Frontends
 
 - [ ] Make a separate Rust TUI for this
+- [ ] And a desktop app?  Using [Iced](https://github.com/iced-rs/iced)?
 - [ ] Something something NextCloud syncing
 - [ ] Google syncing?  That can't be too hard... Right...?
 - [ ] Make an Obsidian plugin?
