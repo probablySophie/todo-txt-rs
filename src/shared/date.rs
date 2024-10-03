@@ -223,11 +223,13 @@ impl Date
                 
         // Attempt to parse the input, but DON'T UNWRAP IT
         let year_wrapped  = &date[0           .. break_1].parse::<u16>();
-        let month_wrapped = &date[break_1 + 1 .. break_2].parse::<u8>();
-        let day_wrapped   = &date[break_2 + 1 ..        ].parse::<u8>();
+        let month_wrapped = &date[break_1 + 1 .. break_2].parse::<u8> ();
+        let day_wrapped   = &date[break_2 + 1 ..        ].parse::<u8> ();
 
         // If we were unable to properly parse the input, return ERR
-        if year_wrapped.as_ref().is_err() || month_wrapped.as_ref().is_err() || day_wrapped.as_ref().is_err()
+        if year_wrapped.as_ref().is_err() 
+        || month_wrapped.as_ref().is_err() 
+        || day_wrapped.as_ref().is_err()
         {
             return Err("Unable to properly parse the given numbers, please make sure you provide the date in the format YYYY-MM-DD".into())
         }
