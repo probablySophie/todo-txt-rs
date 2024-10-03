@@ -30,6 +30,7 @@ impl fmt::Display for Tags
 
 impl Tags
 {
+	/// Checks if the current `Tags` object has a given project `&str`
     pub fn matches_project(&self, project: &str) -> bool
     {
         for item in self.project.clone()
@@ -42,6 +43,7 @@ impl Tags
         // Else
         false
     }
+    /// Checks if the current `Tags` object has a given context `&str`
     pub fn matches_context(&self, context: &str) -> bool
     {
         for item in self.context.clone()
@@ -54,6 +56,7 @@ impl Tags
         // Else
         false
     }
+    /// Checks if the current `Tags` object has a given `&str` tag identifier
     pub fn has_tag(&self, tag: &str) -> bool
     {
         for (custom_tag, _value) in self.custom.clone()
@@ -66,6 +69,10 @@ impl Tags
         // Else
         false
     }
+    /// Searches the current `Tags` object for a given tag identifier `&str`
+    /// Returns an `Ok(String)` containing the tag value
+    /// # Errors
+    /// - Will error if the given tag identifer does not exist on the current `Tag` object
     pub fn tag_value(&self, tag: &str) -> Result<String, ()>
     {
         for (custom_tag, value) in self.custom.clone()
@@ -79,7 +86,7 @@ impl Tags
         Err(())
     }
     
-    
+    /// Creates and returns a new `Tags` object from a given `&str`
 	pub fn from(string: &str) -> Tags
 	{
 		let mut tags = Tags::default();
