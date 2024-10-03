@@ -12,12 +12,12 @@ fn make_todo_vec() -> Vec<Todo>
 {
 	vec![
 		// Priority.  Creation Date.
-		Todo::from("x 2016-05-20 2016-04-30 description description +project1 @context1"),
-		Todo::from("x (A) 2016-05-24 2016-04-19 description description"),
+		Todo::from("x 2016-05-20 2016-04-30 Take Mr Cat to the vet! +project1 @context1"),
+		Todo::from("x (A) 2016-05-24 2016-04-19 Learn how to drive and land a plane"),
 		// Due Date.  Priority
-		Todo::from("(C) description description +project2 @context2 @context3 due:1969-07-20"),
+		Todo::from("(C) Make sure the oven is turned off +project2 @context2 @context3 due:1969-07-20"),
 		// Creation Date.  
-		Todo::from("description +project3 @context3"),
+		Todo::from("Become Napoleon and lose a land war in Russia +project3 @context3"),
 	]
 }
 
@@ -77,5 +77,12 @@ fn filter_incomplete()
 	let todo_vec = make_todo_vec();
 	assert!(incomplete(&todo_vec).len() == 2);
 }
-
+#[test]
+fn fuzzy_search()
+{
+	let todo_vec =make_todo_vec();
+	let item = super::fuzzy_search(&todo_vec, "land war", 3, 0).unwrap();
+	assert_eq!(item.len(), 2);
+	assert_eq!(item.first().unwrap().description, "Become Napoleon and lose a land war in Russia +project3 @context3".to_string());
+}
 
