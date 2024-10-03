@@ -34,15 +34,17 @@ impl fmt::Display for Todo
 		} else {String::new()};
 
 		let mut description = self.description.clone();
-		// If there isn't a space at the end of the description
-		// (and there is actually a description)
-		if ! description.ends_with(' ') && ! description.is_empty()
+		
+		let tags = self.tags.to_string();
+		
+		// If there actually are tags and there isn't a space at the 
+		// end of the description (and there actually is a description)
+		if ! tags.is_empty() && ! description.ends_with(' ') && ! description.is_empty()
 		{
 			description += " "; // Tack one on
 		}
 
-		let tags = self.tags.to_string();
-		
+
 		write!(f, "{complete_string}{priority_string}{completion_date}{creation_date}{description}{tags}")
 	}
 }
@@ -73,13 +75,15 @@ impl Todo
 			return Err("Unable to get Date::today()")
 		}
 		Ok(self.complete)
-		
 }
 
 	/// Make a new `Todo` item from a given `&str`
+	/// Breaks the string up as per the todo.txt standard
+	/// The standard: `https://github.com/todotxt/todo.txt`
 	#[must_use]
 	pub fn from(string: &str) -> Todo
 	{
+		let string = string.trim();
 		if string.len() < 2
 		{
 			return Todo::default();
