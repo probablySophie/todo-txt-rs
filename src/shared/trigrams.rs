@@ -1,10 +1,30 @@
+use std::{fmt::Display, io};
+
 type Trigram = [char; 3];
 
-pub fn get_similarity(string_1: String, string_2: String) -> f32
+/// Gets the similarity between two `&str` inputs using Trigrams!
+/// The level of similarity depends on the length of the strings and the number of differences
+/// *The similarity can get very low, very quickly*
+///
+/// # Errors
+///
+/// - Returns -1. if unable to make a 
+pub fn get_similarity(string_1: &str, string_2: &str) -> i32
 {
-    let string_1_vec: Vec<Trigram> = make_trigrams(string_1);
-    let string_2_vec: Vec<Trigram> = make_trigrams(string_2);
+    // Either make the Trigram vectors or return -1
+    let string_1_vec = make_trigrams(&string_1);
+    let string_2_vec = make_trigrams(&string_2);
 
+    if string_1_vec.is_err()
+    || string_2_vec.is_err()
+    {
+        return -1
+    }
+
+    let string_1_vec: Vec<Trigram> = string_1_vec.unwrap();
+    let string_2_vec: Vec<Trigram> = string_2_vec.unwrap();
+    
+    #[allow(clippy::cast_precision_loss)]
     let large_num: f32 = 
         if string_1_vec.len() > string_2_vec.len() 
              {string_1_vec.len() as f32}
@@ -24,14 +44,22 @@ pub fn get_similarity(string_1: String, string_2: String) -> f32
         }
     }
 
-    matches / large_num * 100.
+    #[cfg(test)]
+    println!("Similarity: {}", matches / large_num * 100.);
+    
+    (matches / large_num * 100.).round() as i32    
 }
 
-fn make_trigrams(string: String) -> Vec<Trigram>
+fn make_trigrams(string: &str) -> io::Result<Vec<Trigram>>
 {
     if string.len() < 3
     {
-        return Vec::new();
+        return Err(
+            io::Error::new(
+                io::ErrorKind::InvalidData, 
+                "Input &str was not long enough, must be at least 3 chars"
+            )
+        )
     }
     
     let string = "  ".to_owned() + &string + " ";
@@ -56,7 +84,7 @@ fn make_trigrams(string: String) -> Vec<Trigram>
     }
     trigram_vec.push( working_trigram );
 
-    trigram_vec // Return trigram_vec
+    Ok(trigram_vec) // Return trigram_vec
 }
 
 fn safe_char(c: char) -> char
@@ -66,4 +94,37 @@ fn safe_char(c: char) -> char
         return *c1
     }
     c
+}
+
+
+#[cfg(test)]
+mod test
+{    
+    #[test] fn safe_char_lower () { assert_eq!(super::safe_char('a'), 'a') }
+    #[test] fn safe_char_upper () { assert_eq!(super::safe_char('A'), 'a') }
+    #[test] fn safe_char_number() { assert_eq!(super::safe_char('1'), '1') }
+    #[test] fn safe_char_symbol() { assert_eq!(super::safe_char('@'), '@') }
+
+    // Floats are my enemy
+    // https://rust-lang.github.io/rust-clippy/master/index.html#/float_cmp
+    fn assert_eq_f(a: f32, b: f32)
+    {
+        println!("{a} < {b}");
+        assert!((a - b).abs() < 0.01);
+    }
+
+    #[test] fn similarity() { assert_eq!(super::get_similarity(
+        "Far from the old watch-tower", 
+        "Far from the old watch-tower"), 100); }
+
+    #[test] fn similarity_caps() { assert_eq!(super::get_similarity(
+        "Far from the old watch-tower", 
+        "Far FROM THE old watcH-tOwEr"), 100); }
+    
+    #[test] fn similarity_very() { assert!(super::get_similarity(
+        "Far from the old watch-tower", 
+        "Far from th3 old watch-tower") > 85); }
+
+    #[test] fn simularity_invalid() {assert_eq!(super::get_similarity("", ""), -1)}
+
 }

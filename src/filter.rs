@@ -86,16 +86,13 @@ pub fn incomplete(todo_vec: &Vec<Todo>) -> Vec<Todo>
 /// `min_assurity` should be a percentage number between 0 - 100
 pub fn fuzzy_search(todo_vec: &[Todo], search_text: &str, num_items: usize, min_assurity: i32) -> std::io::Result<Vec<Todo>>
 {
-	#[allow(clippy::cast_precision_loss)]
-	let min_similarity = min_assurity as f32;
-
-	let mut closest: Vec<(usize, f32)> = Vec::new();
+	let mut closest: Vec<(usize, i32)> = Vec::new();
 
 	for (i, todo_item) in todo_vec.iter().enumerate()
 	{
-		let similarity = get_similarity(todo_item.description.clone(), search_text.to_string());
+		let similarity = get_similarity(&todo_item.description, search_text);
 
-		if similarity > min_similarity
+		if similarity > min_assurity
 		{
 			if closest.is_empty()
 			{
