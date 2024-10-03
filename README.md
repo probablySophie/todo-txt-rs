@@ -35,7 +35,7 @@ Aiming to follow the [`todo.txt` standard](https://github.com/todotxt/todo.txt),
 	- [ ] List the different projects
 	- [ ] List the different contexts
 - [x] Learn how to properly use the built in Rust test suite  
-- [ ] At some point spin Date off into its own library
+- [ ] At some point spin `Date` and `shared::trigrams` off into their own library
 
 #### Planned Frontends
 
