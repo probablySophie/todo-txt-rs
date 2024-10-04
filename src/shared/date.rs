@@ -1,7 +1,7 @@
 use std::fmt;
 use chrono;
 
-#[derive(Default, Clone, Copy)]
+#[derive(Default, Clone, Copy, Debug)]
 pub struct Date
 {
     pub year: u16,
@@ -13,9 +13,9 @@ impl fmt::Display for Date
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result 
     {
-        let year_string = self.year_string();
+        let year_string  = self.year_string ();
         let month_string = self.month_string();
-        let day_string = self.day_string();
+        let day_string   = self.day_string  ();
         
         write!(f, "{year_string}-{month_string}-{day_string}")
     }
@@ -61,52 +61,52 @@ impl std::cmp::PartialOrd for Date
 
     fn lt(&self, other: &Self) -> bool 
     {
-        if self.year < other.year {return true}
-        if self.year > other.year {return false}
+        if self.year  < other.year  {return true }
+        if self.year  > other.year  {return false}
         // else self.year == other.year
-        if self.month < other.month {return true}
+        if self.month < other.month {return true }
         if self.month > other.month {return false}
         // else self.month == other.month
-        if self.day < other.day {return true}
+        if self.day   < other.day   {return true }
         // Else
         false // return false
     }
 
     fn le(&self, other: &Self) -> bool
     {
-        if self.year <= other.year {return true}
-        if self.year > other.year {return false}
+        if self.year  <= other.year  {return true }
+        if self.year  >  other.year  {return false}
         // else self.year == other.year
-        if self.month <= other.month {return true}
-        if self.month > other.month {return false}
+        if self.month <= other.month {return true }
+        if self.month >  other.month {return false}
         // else self.month == other.month
-        if self.day <= other.day {return true}
+        if self.day   <= other.day   {return true }
         // Else
         false // return false
     }
 
     fn gt(&self, other: &Self) -> bool
     {
-        if self.year > other.year {return true}
-        if self.year < other.year {return false}
+        if self.year  > other.year  {return true }
+        if self.year  < other.year  {return false}
         // else self.year == other.year
-        if self.month > other.month {return true}
+        if self.month > other.month {return true }
         if self.month < other.month {return false}
         // else self.month == other.month
-        if self.day > other.day {return true}
+        if self.day   > other.day   {return true }
         // Else
         false // return false
     }
 
     fn ge(&self, other: &Self) -> bool
     {
-        if self.year >= other.year {return true}
-        if self.year < other.year {return false}
+        if self.year  >= other.year  {return true }
+        if self.year  <  other.year  {return false}
         // else self.year == other.year
-        if self.month >= other.month {return true}
-        if self.month < other.month {return false}
+        if self.month >= other.month {return true }
+        if self.month <  other.month {return false}
         // else self.month == other.month
-        if self.day >= other.day {return true}
+        if self.day   >= other.day   {return true }
         // Else
         false // return false
     }
@@ -143,9 +143,9 @@ impl Date
         let chrono_time = chrono::offset::Utc::now().date_naive();
 
         // https://docs.rs/chrono/latest/chrono/naive/struct.NaiveDate.html#method.format
-        let day = chrono_time.format("%Y").to_string().parse::<u8>();
-        let month = chrono_time.format("%m").to_string().parse::<u8>();
-        let year = chrono_time.format("%d").to_string().parse::<u16>();
+        let day   = chrono_time.format("%Y").to_string().parse::< u8>();
+        let month = chrono_time.format("%m").to_string().parse::< u8>();
+        let year  = chrono_time.format("%d").to_string().parse::<u16>();
 
         // If any of those went wrong...
         if day.as_ref().is_err() || month.as_ref().is_err() || year.as_ref().is_err()
@@ -153,9 +153,9 @@ impl Date
             return Err(())
         }
 
-        let day = day.unwrap();
+        let day   = day  .unwrap();
         let month = month.unwrap();
-        let year = year.unwrap();
+        let year  = year .unwrap();
                     
         Ok(Date
         {
@@ -223,21 +223,21 @@ impl Date
                 
         // Attempt to parse the input, but DON'T UNWRAP IT
         let year_wrapped  = &date[0           .. break_1].parse::<u16>();
-        let month_wrapped = &date[break_1 + 1 .. break_2].parse::<u8> ();
-        let day_wrapped   = &date[break_2 + 1 ..        ].parse::<u8> ();
+        let month_wrapped = &date[break_1 + 1 .. break_2].parse::< u8>();
+        let day_wrapped   = &date[break_2 + 1 ..        ].parse::< u8>();
 
         // If we were unable to properly parse the input, return ERR
-        if year_wrapped.as_ref().is_err() 
+        if year_wrapped .as_ref().is_err() 
         || month_wrapped.as_ref().is_err() 
-        || day_wrapped.as_ref().is_err()
+        || day_wrapped  .as_ref().is_err()
         {
             return Err("Unable to properly parse the given numbers, please make sure you provide the date in the format YYYY-MM-DD".into())
         }
 
         // Now actually make sure the values are valid
-        let year: u16 = year_wrapped.as_ref().unwrap().to_owned();
+        let year: u16 = year_wrapped .as_ref().unwrap().to_owned();
         let month: u8 = month_wrapped.as_ref().unwrap().to_owned();
-        let day: u8 = day_wrapped.as_ref().unwrap().to_owned();
+        let day:   u8 = day_wrapped  .as_ref().unwrap().to_owned();
 
         // Return the result of from_numbers
         Date::from_numbers(year, month, day)
