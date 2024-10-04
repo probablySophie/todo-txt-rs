@@ -76,14 +76,13 @@ macro_rules! filter_vec {
 }
 
 
-
-
-// TODO: Filter by fuzzy searching text
-// THEN: Make a test for it
-
 /// Perform a trigram search on the input `Vec<Todo>`'s descriptions
 /// The search text does not need to be capitalised
 /// `min_assurity` should be a percentage number between 0 - 100
+///
+/// # Errors
+///
+/// - If unable to find ANY `Todo` items that fit the search text within the given `min_assurity`
 pub fn fuzzy_search(todo_vec: &[Todo], search_text: &str, num_items: usize, min_assurity: i32) -> std::io::Result<Vec<Todo>>
 {
 	let mut closest: Vec<(usize, i32)> = Vec::new();
@@ -92,27 +91,40 @@ pub fn fuzzy_search(todo_vec: &[Todo], search_text: &str, num_items: usize, min_
 	{
 		let similarity = get_similarity(&todo_item.description, search_text);
 
-		if similarity > min_assurity
+		// Does the similarity fall within our allowable range?
+		if min_assurity < similarity
 		{
-			if closest.is_empty()
+			continue // no. Skip
+		}
+		// If closest is empty, then what we have is by default, the closest
+		if closest.is_empty()
+		{
+			closest.push( (i, similarity) );
+			continue
+		}
+		// Make sure there is a last (there obviously is if we've reached this point .-.)
+		if let Some(lowest_similarity) = closest.last()
+		{
+			// If our new guy is more similar than the lowest current similarity
+			// OR we have fewer items to return than the caller asked for
+			if similarity > lowest_similarity.1 || closest.len() < num_items
 			{
+				// Add our new guy
 				closest.push( (i, similarity) );
-				continue
-			}
-			if similarity > closest.last().unwrap().1 || closest.len() <= num_items
-			{
-				closest.push( (i, similarity) );
-				
-				closest.sort_by(|(_,a), (_,b)| {a.partial_cmp(b).expect("failed to compare usizes when fuzzy searching") } );
 
+				// Sort by similarity
+				closest.sort_by(|(_,a), (_,b)| {a.cmp(b) } );
+
+				// If we NOW have more items then was requested
 				if closest.len() > num_items
 				{
-					closest.remove(0);
+					closest.remove(0); // Murder the least close
 				}
 			}
 		}
 	}
 
+	// If we've gotten this far and we haven't found anything then throw a tantrum
 	if closest.is_empty()
 	{
 		return Err(
@@ -122,10 +134,12 @@ pub fn fuzzy_search(todo_vec: &[Todo], search_text: &str, num_items: usize, min_
 			)
 		)
 	}
-	// Else
+	// Else we're happy and will want to return a Vec<Todo>
 	let mut return_vec = Vec::new();
+	// For each of the closest items
 	for (i, _) in closest
 	{
+		// Add a copy of the real Todo item to our return_vec
 		return_vec.push( todo_vec[i].clone() );
 	}
 
