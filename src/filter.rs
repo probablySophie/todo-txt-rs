@@ -17,14 +17,14 @@ macro_rules! filter_vec {
 
 /// Filter a `Vec<Todo>` by a given priority
 /// Returns a new filtered `Vec<Todo>`
-pub fn priority(todo_vec: &Vec<Todo>, priority: char) -> Vec<Todo>
+#[must_use] pub fn priority(todo_vec: &Vec<Todo>, priority: char) -> Vec<Todo>
 {	
 	filter_vec!(todo_vec, { |todo| todo.priority.is_some_and(|p| p == priority ) })
 }
 
 /// Filter a `Vec<Todo>` by a given due date
 /// Returns a new filtered `Vec<Todo>`
-pub fn due_date(todo_vec: &Vec<Todo>, due_date: Date) -> Vec<Todo>
+#[must_use] pub fn due_date(todo_vec: &Vec<Todo>, due_date: Date) -> Vec<Todo>
 {
 	let date_string = due_date.to_string();
 	filter_vec!(todo_vec, {|todo| todo.tags.tag_value("due").is_ok_and(|due| due == date_string) })
@@ -32,7 +32,7 @@ pub fn due_date(todo_vec: &Vec<Todo>, due_date: Date) -> Vec<Todo>
 
 /// Filter a `Vec<Todo>` by a given creation date
 /// Returns a new filtered `Vec<Todo>`
-pub fn creation_date(todo_vec: &Vec<Todo>, creation_date: Date) -> Vec<Todo>
+#[must_use] pub fn creation_date(todo_vec: &Vec<Todo>, creation_date: Date) -> Vec<Todo>
 {
 	filter_vec!(todo_vec, {|todo| todo.creation_date == Some(creation_date) })
 }
@@ -42,35 +42,35 @@ pub fn creation_date(todo_vec: &Vec<Todo>, creation_date: Date) -> Vec<Todo>
 
 /// Filter a `Vec<Todo>` by a given project name
 /// Returns a new filtered `Vec<Todo>`
-pub fn project(todo_vec: &Vec<Todo>, project: &str) -> Vec<Todo>
+#[must_use] pub fn project(todo_vec: &Vec<Todo>, project: &str) -> Vec<Todo>
 {
 	filter_vec!(todo_vec, {|todo| todo.tags.matches_project(project) })
 }
 
 /// Filter a `Vec<Todo>` by a given context item name
 /// Returns a new filtered `Vec<Todo>`
-pub fn context(todo_vec: &Vec<Todo>, context: &str) -> Vec<Todo>
+#[must_use] pub fn context(todo_vec: &Vec<Todo>, context: &str) -> Vec<Todo>
 {
 	filter_vec!(todo_vec, {|todo| todo.tags.matches_context(context) })
 }
 
 /// Filter a `Vec<Todo>` for Todo items that have a given tag identifier
 /// Returns a new filtered `Vec<Todo>`
-pub fn has_tag(todo_vec: &Vec<Todo>, tag: &str) -> Vec<Todo>
+#[must_use] pub fn has_tag(todo_vec: &Vec<Todo>, tag: &str) -> Vec<Todo>
 {
 	filter_vec!(todo_vec, { |todo| todo.tags.has_tag(tag) })
 }
 
 /// Filter a `Vec<Todo>` for only complete items
 /// Returns a new filtered `Vec<Todo>`
-pub fn complete(todo_vec: &Vec<Todo>) -> Vec<Todo>
+#[must_use] pub fn complete(todo_vec: &Vec<Todo>) -> Vec<Todo>
 {
 	filter_vec!(todo_vec, {|todo| todo.complete })
 }
 
 /// Filter a `Vec<Todo>` for only incomplete items
 /// Returns a new filtered `Vec<Todo>`
-pub fn incomplete(todo_vec: &Vec<Todo>) -> Vec<Todo>
+#[must_use] pub fn incomplete(todo_vec: &Vec<Todo>) -> Vec<Todo>
 {
 	filter_vec!(todo_vec, {|todo| !todo.complete })
 }
