@@ -5,7 +5,7 @@ use std::fmt;
 
 use crate::tags::Tags;
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug)]
 pub struct Todo
 {
 	pub complete: bool,

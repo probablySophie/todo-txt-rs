@@ -2,7 +2,7 @@ use std::fmt;
 
 #[path = "tests/tags_test.rs"] mod test;
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug)]
 pub struct Tags
 {
 	pub project: Vec<String>,
