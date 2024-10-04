@@ -5,7 +5,7 @@ use crate::todo::Todo;
 /// From a `Vec<Todo>` get all the existing project names
 /// Returns a `Vec<String>` containing the project names
 /// This function is **inefficient** and is meant to be used *once* per session, please store the returned `Vec<String>` if you intend to use it again
-pub fn get_projects(todo_vec: &Vec<Todo>) -> Vec<String>
+#[must_use] pub fn get_projects(todo_vec: &Vec<Todo>) -> Vec<String>
 {
 	let mut projects: Vec<String> = Vec::new();
 
@@ -33,7 +33,7 @@ pub fn get_projects(todo_vec: &Vec<Todo>) -> Vec<String>
 /// From a `Vec<Todo>` get all the existing context names
 /// Returns a `Vec<String>` containing the context names
 /// This function is **inefficient** and is meant to be used *once* per session, please store the returned `Vec<String>` if you intend to use it again
-pub fn get_contexts(todo_vec: &Vec<Todo>) -> Vec<String>
+#[must_use] pub fn get_contexts(todo_vec: &Vec<Todo>) -> Vec<String>
 {
 	let mut contexts: Vec<String> = Vec::new();
 
