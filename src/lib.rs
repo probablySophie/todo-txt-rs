@@ -11,9 +11,9 @@ mod todo;
 pub use todo::*;
 mod tags;
 
-mod info;
-mod sort;
-mod filter;
+pub mod info;
+pub mod sort;
+pub mod filter;
 //mod addons;
 
 #[path = "tests/lib_tests.rs"] mod test;
