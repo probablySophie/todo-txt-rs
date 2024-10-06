@@ -66,3 +66,6 @@ pub fn flatten_vec(todo_vec: Vec<todo::Todo>) -> String
     
     string // return string
 }
+
+
+// TODO: pub fn prune_duplicates()
