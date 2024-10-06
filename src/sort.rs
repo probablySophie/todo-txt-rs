@@ -12,7 +12,7 @@ pub enum Sort
 
 
 /// Sort a `todo_vec` by the `due_date` tag and return a new `Vec<Todo>`
-pub fn due_date(todo_vec: &[Todo], sort_by: Sort) -> Vec<Todo>
+#[must_use] pub fn due_date(todo_vec: &[Todo], sort_by: Sort) -> Vec<Todo>
 {
     let mut new_todo_vec = todo_vec.to_vec();
     new_todo_vec.sort_by( |todo_a, todo_b|
@@ -30,9 +30,9 @@ pub fn due_date(todo_vec: &[Todo], sort_by: Sort) -> Vec<Todo>
                         (Err(_), Err(_)) => { std::cmp::Ordering::Equal   },
                     }
                 },
-                (Ok(_) , Err(_)) => { std::cmp::Ordering::Greater },
-                (Err(_), Ok (_)) => { std::cmp::Ordering::Less    },
-                (Err(_), Err(_)) => { std::cmp::Ordering::Equal   },
+                (Ok(_)  , Err(())) => { std::cmp::Ordering::Greater },
+                (Err(()), Ok (_) ) => { std::cmp::Ordering::Less    },
+                (Err(()), Err(())) => { std::cmp::Ordering::Equal   },
             }
         }
         else
@@ -49,9 +49,9 @@ pub fn due_date(todo_vec: &[Todo], sort_by: Sort) -> Vec<Todo>
                         (Err(_), Err(_)) => { std::cmp::Ordering::Equal   },
                     }
                 },
-                (Ok(_) , Err(_)) => { std::cmp::Ordering::Less    },
-                (Err(_), Ok (_)) => { std::cmp::Ordering::Greater },
-                (Err(_), Err(_)) => { std::cmp::Ordering::Equal   },
+                (Ok(_)  , Err(())) => { std::cmp::Ordering::Less    },
+                (Err(()), Ok (_) ) => { std::cmp::Ordering::Greater },
+                (Err(()), Err(())) => { std::cmp::Ordering::Equal   },
             }            
         }
     );
@@ -59,7 +59,7 @@ pub fn due_date(todo_vec: &[Todo], sort_by: Sort) -> Vec<Todo>
 }
 
 /// Sort a `todo_vec` by their `creation_date` and return a new `Vec<Todo>`
-pub fn creation_date(todo_vec: &[Todo], sort_by: Sort) -> Vec<Todo>
+#[must_use] pub fn creation_date(todo_vec: &[Todo], sort_by: Sort) -> Vec<Todo>
 {
     let mut new_todo_vec = todo_vec.to_vec();
 
@@ -90,10 +90,8 @@ pub fn creation_date(todo_vec: &[Todo], sort_by: Sort) -> Vec<Todo>
     new_todo_vec
 }
 
-// TODO: Sort by completion date & matching testing
-
 /// Sort a `todo_vec` by their `priority` and return a new `Vec<Todo>`
-pub fn priority(todo_vec: &[Todo], sort_by: Sort) -> Vec<Todo>
+#[must_use] pub fn priority(todo_vec: &[Todo], sort_by: Sort) -> Vec<Todo>
 {
     let mut new_todo_vec = todo_vec.to_vec();
 
@@ -123,3 +121,9 @@ pub fn priority(todo_vec: &[Todo], sort_by: Sort) -> Vec<Todo>
 
     new_todo_vec
 }
+
+// TODO: Sort by completion date
+//       & make matching #[test]s
+
+// TODO: Sort by a date range
+//       & make matching #[test]s
