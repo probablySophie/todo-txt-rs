@@ -81,7 +81,7 @@ fn filter_incomplete()
 fn fuzzy_search()
 {
 	let todo_vec =make_todo_vec();
-	let item = super::fuzzy_search(&todo_vec, "land war", 3, 0).unwrap();
+	let item = super::fuzzy_search(&todo_vec, "land war", 3, 50).unwrap();
 	assert_eq!(item.len(), 2);
 	assert_eq!(item.first().unwrap().description, "Become Napoleon and lose a land war in Russia +project3 @context3".to_string());
 }
