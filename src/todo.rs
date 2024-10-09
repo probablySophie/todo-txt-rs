@@ -80,6 +80,8 @@ impl Todo
 	// TODO: pub fn get_tags
 	// TODO: pub fn add_tag
 	// TODO: pub fn update_tag
+	// TODO: pub fn get_context
+	// TODO: pub fn get_project
 
 	/// Make a new `Todo` item from a given `&str`
 	/// Breaks the string up as per the todo.txt standard
