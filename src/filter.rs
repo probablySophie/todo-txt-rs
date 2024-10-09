@@ -91,8 +91,11 @@ pub fn fuzzy_search(todo_vec: &[Todo], search_text: &str, num_items: usize, min_
 	{
 		let similarity = get_similarity(&todo_item.description, search_text);
 
+	    #[cfg(test)] // For when something goes wrong
+		println!("{} {}", similarity, &todo_item.description);
+
 		// Does the similarity fall within our allowable range?
-		if min_assurity < similarity
+		if min_assurity > similarity
 		{
 			continue // no. Skip
 		}
@@ -134,6 +137,7 @@ pub fn fuzzy_search(todo_vec: &[Todo], search_text: &str, num_items: usize, min_
 			)
 		)
 	}
+	closest.reverse(); // We want the first result to be the most similar
 	// Else we're happy and will want to return a Vec<Todo>
 	let mut return_vec = Vec::new();
 	// For each of the closest items
