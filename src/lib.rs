@@ -53,7 +53,7 @@ pub fn bulk_create(string: &str) -> Vec<todo::Todo>
 #[must_use]
 /// Creates a `String` from a given `Vec<Todo>`
 /// This function is intended to be used for exporting & saving between active sessions
-pub fn flatten_vec(todo_vec: Vec<todo::Todo>) -> String
+pub fn flatten_vec(todo_vec: &Vec<todo::Todo>) -> String
 {
     let mut string = String::new();
     
