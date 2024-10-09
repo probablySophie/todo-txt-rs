@@ -1,4 +1,4 @@
-use std::{fmt::Display, io};
+use std::io;
 
 type Trigram = [char; 3];
 
@@ -12,8 +12,8 @@ type Trigram = [char; 3];
 pub fn get_similarity(string_1: &str, string_2: &str) -> i32
 {
     // Either make the Trigram vectors or return -1
-    let string_1_vec = make_trigrams(&string_1);
-    let string_2_vec = make_trigrams(&string_2);
+    let string_1_vec = make_trigrams(string_1);
+    let string_2_vec = make_trigrams(string_2);
 
     if string_1_vec.is_err()
     || string_2_vec.is_err()
@@ -23,13 +23,14 @@ pub fn get_similarity(string_1: &str, string_2: &str) -> i32
 
     let string_1_vec: Vec<Trigram> = string_1_vec.unwrap();
     let string_2_vec: Vec<Trigram> = string_2_vec.unwrap();
+
     
     #[allow(clippy::cast_precision_loss)]
-    let large_num: f32 = 
+    let small_num: f32 = 
         if string_1_vec.len() > string_2_vec.len() 
              {string_1_vec.len() as f32}
         else {string_2_vec.len() as f32};
-
+   
     let mut matches: f32 = 0.;
 
     for trigram_1 in string_1_vec
@@ -45,9 +46,10 @@ pub fn get_similarity(string_1: &str, string_2: &str) -> i32
     }
 
     #[cfg(test)]
-    println!("Similarity: {}", matches / large_num * 100.);
-    
-    (matches / large_num * 100.).round() as i32    
+    println!("Similarity: {}", matches / small_num * 100.);
+
+    #[allow(clippy::cast_possible_truncation)]
+    return (matches / small_num * 100.).round() as i32    
 }
 
 fn make_trigrams(string: &str) -> io::Result<Vec<Trigram>>
@@ -62,7 +64,7 @@ fn make_trigrams(string: &str) -> io::Result<Vec<Trigram>>
         )
     }
     
-    let string = "  ".to_owned() + &string + " ";
+    let string = "  ".to_owned() + string + " ";
 
     let mut trigram_vec: Vec<Trigram> = Vec::new();
 
