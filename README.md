@@ -6,6 +6,10 @@ Aiming to follow the [`todo.txt` standard](https://github.com/todotxt/todo.txt),
 
 ****
 
+Make `todo_txt_rs::core`?  
+And then have further crates like `todo_txt_rs::ADD_ON_NAME`??  
+
+
 #### The Plan
 
 - [ ] Get the base stuff *working*  
@@ -40,9 +44,19 @@ Aiming to follow the [`todo.txt` standard](https://github.com/todotxt/todo.txt),
 #### Planned Frontends
 
 - [ ] Make a separate Rust TUI for this
-- [ ] And a desktop app?  Using [Iced](https://github.com/iced-rs/iced)?
-- [ ] Something something NextCloud syncing
-- [ ] Google syncing?  That can't be too hard... Right...?
+- [ ] And a desktop app?  
+	- [ ] Using [Iced](https://github.com/iced-rs/iced)?
+	- [ ] Or WASM & [Tauri](https://github.com/tauri-apps/tauri)?
+- [ ] Syncing (or actually this really shouldn't be something this crate does?)
+	- [ ] Something something NextCloud syncing
+	- [ ] Google syncing?  That can't be too hard... Right...?
+	- [ ] OneDrive?
 - [ ] Make an Obsidian plugin?
 - [ ] NextCloud web-app?
+	- [ ] WASM?
+- [ ] Firefox new tab page?!
+	- [ ] WASM?
+- [ ] A KanBan board using a tag? `kanban:topic,x,y`?
+	- [ ] WASM?
+- [ ] A todo roulette wheel to pick a task from a given set of projects or tasks
 

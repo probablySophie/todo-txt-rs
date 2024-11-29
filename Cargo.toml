@@ -1,7 +1,14 @@
 [package]
 name = "todo-txt-rs"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
 
 [dependencies]
-chrono = "0.4.38"
+chrono  = "0.4.38"
+
+[lib]
+name = "todo_txt_rs"
+version = "0.0.1"
+path = "src/lib.rs"
+doc = true
+crate-type = ["lib"]
